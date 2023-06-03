@@ -57,9 +57,13 @@ const fetchDetails = (userInput) => {
         "(" + apiData.public_repos + ")";
 
       document.getElementById("followers-list").innerHTML =
-        `<form action="user.html">` + followersList + `</form>`;
+        `<form class="w-max pt-4 max-h-72 overflow-scroll flex flex-col gap-2 items-start text-base font-light" action="user.html">` +
+        followersList +
+        `</form>`;
       document.getElementById("following-list").innerHTML =
-        `<form action="user.html">` + followingList + `</form>`;
+        `<form class="w-max pt-4 max-h-72 overflow-scroll flex flex-col gap-2 items-start text-base font-light" action="user.html">` +
+        followingList +
+        `</form>`;
       document.getElementById("repo-list").innerHTML = repoList;
       document.getElementById("created").innerText = moment(
         apiData.created_at
@@ -175,3 +179,23 @@ const selectRepo = (repoId) => {
       document.getElementById("repo-section").classList.add("flex");
     });
 };
+
+function openDetail(evt, detail) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    if (!tabcontent[i].classList.contains("hidden")) {
+      tabcontent[i].classList.add("hidden");
+    }
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", " ");
+  }
+  evt.currentTarget.className += " active";
+  if (evt.currentTarget.classList.contains("active")) {
+    document.getElementById(detail).className = document
+      .getElementById(detail)
+      .className.replace(" hidden", " flex");
+  }
+}
