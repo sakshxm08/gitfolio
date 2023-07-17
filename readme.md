@@ -1,6 +1,6 @@
 
-![GitFolio Logo](https://gitfolio-sakshxm08.netlify.app/content/logo-transparent.png)
-
+![GitFolio Logo][url]
+[url]: https://imgtr.ee/images/2023/07/17/2d698f24d5a49f555a91cd6a4d1f0fce.png
 
 
 
