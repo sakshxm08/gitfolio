@@ -1,13 +1,10 @@
-let i = sessionStorage.getItem("i");
+let params = new URL(document.location).searchParams;
+let userInput = params.get("username");
 
-let userInput = sessionStorage.getItem(`userInput${i}`);
-console.log(userInput);
 const fetchDetails = (userInput) => {
   fetch(`https://api.github.com/users/${userInput}`)
     .then((response) => response.json())
     .then(async (apiData) => {
-      // console.log(apiData);
-
       // FOLLOWERS LIST
       let followersUrl = await fetch(apiData.followers_url);
       let followersResponse = await followersUrl.json();
@@ -34,7 +31,7 @@ const fetchDetails = (userInput) => {
         repoList += `<li onclick="selectRepo(${repo.id})">${repo.name}</li>`;
       }
 
-      // Seting Details
+      // Setting Details
       document.getElementById("name").innerText = apiData.name;
       document.getElementById("username").innerText = "@" + apiData.login;
       document.getElementById("avatar").src = apiData.avatar_url;
@@ -57,13 +54,13 @@ const fetchDetails = (userInput) => {
         "(" + apiData.public_repos + ")";
 
       document.getElementById("followers-list").innerHTML =
-        `<form class="w-max pt-4 max-h-72 overflow-scroll flex flex-col gap-2 items-start text-base font-light" action="user.html">` +
-        followersList +
-        `</form>`;
+        // `<form class="w-max pt-4 max-h-72 overflow-scroll flex flex-col gap-2 items-start text-base font-light" action="user.html">` +
+        followersList;
+      // `</form>`;
       document.getElementById("following-list").innerHTML =
-        `<form class="w-max pt-4 max-h-72 overflow-scroll flex flex-col gap-2 items-start text-base font-light" action="user.html">` +
-        followingList +
-        `</form>`;
+        // `<form class="w-max pt-4 max-h-72 overflow-scroll flex flex-col gap-2 items-start text-base font-light" action="user.html">` +
+        followingList;
+      // `</form>`;
       document.getElementById("repo-list").innerHTML = repoList;
       document.getElementById("created").innerText = moment(
         apiData.created_at
@@ -82,43 +79,18 @@ const fetchDetails = (userInput) => {
     .catch((error) => {
       document.getElementById("loader").classList.add("hidden");
       document.getElementById("loader").classList.remove("flex");
-      alert(error);
+      alert("No such user");
+      // window.location.pathname = "/";
       console.log(error);
-      window.location.pathname = "/";
-      sessionStorage.clear();
     });
 };
 
-if (userInput === "null" || userInput == null) {
-  window.location.pathname = "/";
-} else {
-  fetchDetails(userInput);
-}
-
 const getUserIndirect = (loginId) => {
-  userInput = loginId;
-  i++;
-  sessionStorage.setItem("i", i);
-  sessionStorage.setItem(`userInput${i}`, userInput);
-  console.log(i);
+  window.location.href =
+    window.location.origin + window.location.pathname + "?username=" + loginId;
 };
 
-const perfEntries = performance.getEntriesByType("navigation");
-if (perfEntries.length && perfEntries[0].type === "back_forward") {
-  // console.log("User got here from Back or Forward button.");
-  if (i >= 0) {
-    let j = sessionStorage.i;
-    j--;
-    sessionStorage.i = j;
-    console.log(j);
-    let userSelect = sessionStorage.getItem(`userInput${j}`);
-    console.log(sessionStorage);
-    fetchDetails(userSelect);
-  } else {
-    window.location.pathname = "/";
-    sessionStorage.clear();
-  }
-}
+fetchDetails(userInput);
 
 let selectedRepo;
 
@@ -135,10 +107,7 @@ const selectRepo = (repoId) => {
   document.getElementById("repo-section").classList.remove("flex");
   apiDataCollect
     .then(async (repos) => {
-      // console.log(repos);
       for (let repo of repos) {
-        // console.log(repo.name);
-
         if (repo.id === repoId) {
           selectedRepo = repo;
           break;
@@ -152,7 +121,6 @@ const selectRepo = (repoId) => {
       for (commit of commitResponse) {
         commitCount++;
       }
-      console.log(selectedRepo);
       document.getElementById("repo-name").innerText = selectedRepo.name;
       document.getElementById("owner-img").src = selectedRepo.owner.avatar_url;
       document.getElementById("repo-link").innerText = selectedRepo.full_name;
